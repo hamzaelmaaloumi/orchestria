@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
 import NavBar from './components/navBar'
 import { Suspense } from 'react'
+import AuthProvider from './auth/Provider'
+import UserProvider from './components/userProvider'
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -19,10 +21,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={manrope.variable}>
       <body className="flex flex-col font-manrope">
-        <NavBar />
-          <div className="p-4">        
-            {children}
-          </div>
+        <UserProvider>
+          <AuthProvider>
+            <NavBar />
+            <div className="p-4">        
+              {children}
+            </div>
+          </AuthProvider>
+        </UserProvider>
       </body>
     </html>
   )

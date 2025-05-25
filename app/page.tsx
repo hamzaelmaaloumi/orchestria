@@ -1,17 +1,15 @@
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { resolve } from "path";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 export default async function Home() {
 
-  await new Promise(resolve => {
-    setTimeout(() => {
-      resolve(true);
-    }, 2000);
-  });
+  const session = await getServerSession(authOptions)
 
   return (
     <div>
-      <h1 className="text-pink-700 font-bold">Hello world how is it going on today</h1>
+      <h1 className="text-pink-700 font-bold">Hello {session ? <span>{session.user!.name}</span>:<span>world</span>}</h1>
       <Link href="/users?orderby=name"><button>go to Users</button></Link>
     </div>
   );
