@@ -15,6 +15,8 @@ interface Book{
 
 const Book = () => {
     const [books, setBooks] = useState<Book[]>([])
+    const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
+    const [query, setQuery] = useState('');
 
     useEffect(()=> {
         const fetchData = async () =>{
@@ -22,6 +24,7 @@ const Book = () => {
                 const res = await axios.get('http://localhost:3000/api/books')
                 console.log(res.data);
                 setBooks(res.data)
+                setFilteredBooks(res.data)
             }catch(error: any){
                 console.log("this error happened ", error)
             }
@@ -31,8 +34,14 @@ const Book = () => {
 
     }, [])
 
-
-
+    useEffect(()=> {{
+            setFilteredBooks(books.filter(book => 
+                book.title.toLowerCase().includes(query.toLowerCase()) ||
+                book.author.toLowerCase().includes(query.toLowerCase()) ||
+                book.isbn.toLowerCase().includes(query.toLowerCase())
+            ))
+        }
+    }, [query, books])
 
 return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
@@ -69,15 +78,42 @@ return (
 
       {/* Search and Filter Section */}
       <div className="max-w-7xl mx-auto px-8 py-8">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row gap-6 items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm">📖</span>
             </div>
             <h2 className="text-2xl font-bold text-white">Browse Collection</h2>
           </div>
+          
+          {/* Enhanced Search Bar */}
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-gray-800/60 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-400/60 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300 backdrop-blur-sm"
+              placeholder="Search books by title, author, or ISBN..."
+            />
+            {query && (
+              <button
+                onClick={() => setQuery('')}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+          
           <div className="text-sm text-gray-400">
-            Showing all {books.length} available books
+            Showing {filteredBooks.length} of {books.length} books
           </div>
         </div>
       </div>
@@ -85,7 +121,7 @@ return (
       {/* Books Grid */}
       <div className="max-w-7xl mx-auto px-8 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {books.map((book) => (
+          {filteredBooks.map((book) => (
             <div 
               key={book.id} 
               className="group relative overflow-hidden bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-gray-700/50 hover:border-purple-400/50 transition-all duration-500 hover:shadow-[0_25px_50px_rgba(139,92,246,0.15)] hover:scale-[1.03] hover:-translate-y-2"
@@ -191,7 +227,23 @@ return (
         </div>
 
         {/* Empty state */}
-        {books.length === 0 && (
+        {filteredBooks.length === 0 && books.length > 0 && (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl">🔍</span>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">No Books Found</h3>
+            <p className="text-gray-500">Try adjusting your search terms or browse all books.</p>
+            <button
+              onClick={() => setQuery('')}
+              className="mt-4 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-500 hover:to-blue-500 transition-all duration-300"
+            >
+              Clear Search
+            </button>
+          </div>
+        )}
+
+        {filteredBooks.length === 0 && books.length === 0 && (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">📚</span>
