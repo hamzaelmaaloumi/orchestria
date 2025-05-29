@@ -21,7 +21,8 @@
     "prisma": "^6.8.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-email": "^4.0.15"
+    "react-email": "^4.0.15",
+    "react-hook-form": "^7.56.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

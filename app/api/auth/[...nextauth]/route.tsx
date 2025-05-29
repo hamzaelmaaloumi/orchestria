@@ -36,7 +36,22 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt"
-  }
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email! } });
+        token.role = dbUser?.role || "user";
+        token.id = dbUser?.id; // Add user ID to token
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user!.role = token.role as string;
+      session.user!.id = token.id as string; // Add user ID to session
+      return session;
+    }
+  }  
 }
 //use useSession() hook for client components
 
