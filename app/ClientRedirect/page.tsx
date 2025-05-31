@@ -1,14 +1,14 @@
 'use client'
 import { Session } from 'next-auth'
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
 
 
-interface myp{
-  session: Session | null;
-}
 
-const ClientRedirect = ({session}: myp) => {
+
+const ClientRedirect = () => {
+  const {status, data: session} = useSession()
   const router = useRouter()
   useEffect(() => {
       if (session && session?.user?.role === "user") {
