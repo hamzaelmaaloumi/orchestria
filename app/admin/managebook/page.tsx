@@ -16,13 +16,6 @@ interface formData{
 
 
 const page = () => {    
-    const {status, data: session}  = useSession()
-    const router = useRouter()
-    useEffect(() => {
-        if (status === "authenticated" && session?.user.role === "user") {
-          router.push("/books");
-        }
-      }, [status, session, router]);
     const [addSuccess, setAddSuccess] = useState(false)
     const [addFail, setAddFail] = useState('')
     const [updateSuccess, setUpdateSuccess] = useState(false)

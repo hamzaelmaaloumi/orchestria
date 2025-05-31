@@ -71,7 +71,6 @@ const page = async () => {
 
         return (
             <div className="min-h-screen bg-black p-6">
-                <ClientRedirect session={session} />
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="mb-8">
